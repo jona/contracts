@@ -186,7 +186,7 @@ contract Staking is StakingV2Storage, GraphUpgradeable, IStaking {
     /**
      * @dev Check if the caller is the slasher.
      */
-    modifier onlySlasher {
+    modifier onlySlasher() {
         require(slashers[msg.sender] == true, "!slasher");
         _;
     }
@@ -704,13 +704,16 @@ contract Staking is StakingV2Storage, GraphUpgradeable, IStaking {
 
     /**
      * @dev Unstake tokens from the indexer stake, lock them until thawing period expires.
+     * NOTE: The function accepts an amount greater than the currently staked tokens.
+     * If that happens, it will try to unstake the max amount of tokens it can.
+     * The reason for this behaviour is to avoid time conditions while the transaction
+     * is in flight.
      * @param _tokens Amount of tokens to unstake
      */
     function unstake(uint256 _tokens) external override notPartialPaused {
         address indexer = msg.sender;
         Stakes.Indexer storage indexerStake = stakes[indexer];
 
-        require(_tokens > 0, "!tokens");
         require(indexerStake.tokensStaked > 0, "!stake");
 
         // Tokens to lock is capped to the available tokens
@@ -1137,8 +1140,7 @@ contract Staking is StakingV2Storage, GraphUpgradeable, IStaking {
         // Used for rewards calculations
         subgraphAllocations[alloc.subgraphDeploymentID] = subgraphAllocations[
             alloc.subgraphDeploymentID
-        ]
-        .add(alloc.tokens);
+        ].add(alloc.tokens);
 
         emit AllocationCreated(
             _indexer,
@@ -1210,8 +1212,7 @@ contract Staking is StakingV2Storage, GraphUpgradeable, IStaking {
         // Used for rewards calculations
         subgraphAllocations[alloc.subgraphDeploymentID] = subgraphAllocations[
             alloc.subgraphDeploymentID
-        ]
-        .sub(alloc.tokens);
+        ].sub(alloc.tokens);
 
         emit AllocationClosed(
             alloc.indexer,
