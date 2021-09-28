@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 pragma solidity ^0.7.3;
 
@@ -13,6 +13,7 @@ interface IGNS {
         uint32 reserveRatio;
         bool disabled;
         uint256 withdrawableGRT;
+        uint256 createdAt;
     }
 
     // -- Configuration --

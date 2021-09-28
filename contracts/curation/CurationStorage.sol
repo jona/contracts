@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 pragma solidity ^0.7.3;
 
@@ -26,4 +26,15 @@ contract CurationV1Storage is Managed {
     // Mapping of subgraphDeploymentID => CurationPool
     // There is only one CurationPool per SubgraphDeploymentID
     mapping(bytes32 => ICuration.CurationPool) public pools;
+}
+
+contract CurationV2Storage is CurationV1Storage {
+    // Block count for initialization period of the bonding curve
+    uint256 public initializationPeriod;
+
+    // Block count for initialization exit period of the bonding curve
+    uint256 public initializationExitPeriod;
+
+    // Average blocks per day
+    uint256 public blocksPerDay;
 }
